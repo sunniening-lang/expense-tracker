@@ -91,10 +91,11 @@ class ExpenseApp:
         self.label(left, '日期（YYYY-MM-DD）', 10, MUTED).pack(anchor='w')
         self.date_entry = ttk.Entry(left, textvariable=self.date_var, font=('Microsoft JhengHei UI', 12))
         self.date_entry.pack(fill='x', ipady=6, pady=(4, 8))
+        self.date_entry.bind('<FocusOut>', self.normalize_date)
         self.label(left, '金額（元）', 10, MUTED).pack(anchor='w')
         ttk.Entry(left, textvariable=self.amount_var, font=('Microsoft JhengHei UI', 12)).pack(fill='x', ipady=6, pady=(4, 8))
-        self.label(left, '支出類別', 10, MUTED).pack(anchor='w')
-        self.category_combo = ttk.Combobox(left, textvariable=self.selected_category, values=CATEGORIES, state='readonly', font=('Microsoft JhengHei UI', 11))
+        self.label(left, '支出類別（可直接輸入新類別）', 10, MUTED).pack(anchor='w')
+        self.category_combo = ttk.Combobox(left, textvariable=self.selected_category, values=CATEGORIES, state='normal', font=('Microsoft JhengHei UI', 11))
 
         self.category_combo.pack(fill='x', ipady=5, pady=(4, 8))
         self.label(left, '備註（選填）', 10, MUTED).pack(anchor='w')
@@ -151,14 +152,20 @@ class ExpenseApp:
         self.status.set(('✗ ' if error else '✓ ') + message)
         self.status_label.config(fg='#B33A36' if error else GREEN)
 
-    def get_data(self):
+    def normalize_date(self, event=None):
         raw_date = self.date_var.get().strip()
         try:
-            d = datetime.strptime(raw_date, '%Y-%m-%d')
-            if d.strftime('%Y-%m-%d') != raw_date:
-                raise ValueError
+            normalized = datetime.strptime(raw_date, '%Y-%m-%d').date().isoformat()
         except ValueError:
-            self.notify('日期格式錯誤，請使用 YYYY-MM-DD', True)
+            if event is None:
+                self.notify('日期無效，請輸入年-月-日，例如 2026-3-3', True)
+            return None
+        self.date_var.set(normalized)
+        return normalized
+
+    def get_data(self):
+        raw_date = self.normalize_date()
+        if raw_date is None:
             return None
         try:
             amount = float(self.amount_var.get().strip())
@@ -167,9 +174,9 @@ class ExpenseApp:
         except ValueError:
             self.notify('金額必須是大於 0 的有效數字', True)
             return None
-        category = self.selected_category.get()
-        if category not in CATEGORIES:
-            self.notify('請選擇支出類別', True)
+        category = self.selected_category.get().strip()
+        if not category:
+            self.notify('請選擇或輸入支出類別', True)
             return None
         return {'Date': raw_date, 'Amount': str(amount), 'Category': category,
                 'Notes': self.notes_var.get().strip()}
@@ -257,6 +264,13 @@ class ExpenseApp:
             self.tree.delete(item)
         self.daily_list.delete(0, tk.END)
         records = read_records()
+        # 從已儲存的支出取得自訂類別，重開程式後仍可選取。
+        categories = dict.fromkeys(CATEGORIES)
+        for row in records:
+            category = row.get('Category', '').strip()
+            if category:
+                categories[category] = None
+        self.category_combo['values'] = list(categories)
         totals = defaultdict(float)
         grand_total = 0.0
         today_total = 0.0
