@@ -60,8 +60,7 @@ Usage Instructions
 
 Sample Pie Chart
 以下為系統產生的支出類別圓餅圖：
-![Uploading image.png…]()
-
+<img width="817" height="602" alt="image" src="https://github.com/user-attachments/assets/62c3d43d-936b-4e30-b435-8a1540e7c29c" />
 Demonstration Video（展示影片）
 Demo Video：
 https://youtu.be/5LnY6eijXVY
