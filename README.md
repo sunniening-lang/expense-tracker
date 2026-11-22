@@ -29,9 +29,7 @@ Installation
 下載:
 <img width="865" height="507" alt="image" src="https://github.com/user-attachments/assets/7d3f0d22-11fd-4cde-af63-788f099e75fc" />
 下載完後解壓縮即可
-
-本專案使用 Python 標準函式庫，不需要另外安裝第三方 Python 套件
-請確認電腦已安裝 Python，並且 Python 環境支援 Tkinter
+!!本專案使用 Python 標準函式庫，不需要另外安裝第三方 Python 套件請確認電腦已安裝 Python，並且 Python 環境支援 Tkinter
 
 How to Run
 請先確認電腦已安裝 Python 3。
@@ -59,9 +57,8 @@ Usage Instructions
 (可參考最後的Demo Video)
 
 Sample Pie Chart
-以下為系統產生的支出類別圓餅圖：
 <img width="817" height="602" alt="image" src="https://github.com/user-attachments/assets/62c3d43d-936b-4e30-b435-8a1540e7c29c" />
-Demonstration Video（展示影片）
-Demo Video：
-https://youtu.be/5LnY6eijXVY
+
+Demonstration Video
+Demo Video ： https://youtu.be/5LnY6eijXVY
 
